@@ -231,8 +231,8 @@ const ColorWorldSplit: React.FC = () => {
       const containerAspect = containerRect.width / containerRect.height;
       const imageAspect = img.width / img.height;
 
-      // Use a smaller size factor (0.5 = 50% of container size)
-      const sizeFactor = 0.5;
+             // Use a larger size factor for better quality (0.9 = 90% of container size)
+       const sizeFactor = 0.9;
       let canvasWidth, canvasHeight;
       if (imageAspect > containerAspect) {
         // Image is wider than container
@@ -244,8 +244,9 @@ const ColorWorldSplit: React.FC = () => {
         canvasWidth = containerRect.height * sizeFactor * imageAspect;
       }
 
-      canvas.width = canvasWidth;
-      canvas.height = canvasHeight;
+             // Set canvas dimensions directly for better quality
+       canvas.width = canvasWidth;
+       canvas.height = canvasHeight;
 
              // Update canvas bounds for slider positioning
        const canvasRect = canvas.getBoundingClientRect();
@@ -270,16 +271,16 @@ const ColorWorldSplit: React.FC = () => {
        }, 0);
 
       // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
       // Calculate split position based on slider percentage
-      const splitX = Math.round((canvas.width * sliderPosition) / 100);
+      const splitX = Math.round((canvasWidth * sliderPosition) / 100);
 
       // Ensure we have valid dimensions
       if (splitX <= 0) {
         // If slider is at 0%, show only filtered image
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+        const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
         const filteredData = applyColorblindFilter(
           imageData,
           selectedType.matrix
@@ -288,35 +289,35 @@ const ColorWorldSplit: React.FC = () => {
         return;
       }
 
-      if (splitX >= canvas.width) {
+      if (splitX >= canvasWidth) {
         // If slider is at 100%, show only original image
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
         return;
       }
 
       // Draw original image on left side
       ctx.save();
       ctx.beginPath();
-      ctx.rect(0, 0, splitX, canvas.height);
+      ctx.rect(0, 0, splitX, canvasHeight);
       ctx.clip();
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
       ctx.restore();
 
       // Draw filtered image on right side
       ctx.save();
       ctx.beginPath();
-      ctx.rect(splitX, 0, canvas.width - splitX, canvas.height);
+      ctx.rect(splitX, 0, canvasWidth - splitX, canvasHeight);
       ctx.clip();
 
       // Apply colorblind filter to the right side only
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const rightWidth = canvas.width - splitX;
+      ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+      const rightWidth = canvasWidth - splitX;
       if (rightWidth > 0) {
         const imageData = ctx.getImageData(
           splitX,
           0,
           rightWidth,
-          canvas.height
+          canvasHeight
         );
         const filteredData = applyColorblindFilter(
           imageData,

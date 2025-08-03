@@ -481,21 +481,21 @@
     gap: 0;
     padding: 0;
     max-width: 100%;
-    padding-bottom: 160px; /* Ensure space for bottom controls */
+    padding-bottom: 140px; /* Reduced space for controls to make image bigger */
   }
 
   .canvas-container {
     padding: 0;
-    height: calc(100vh - 200px); /* More space for controls */
+    height: calc(100vh - 160px); /* More space for the image */
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 160px; /* Push image up from bottom controls */
+    margin-bottom: 140px; /* Reduced margin to make image bigger */
   }
 
   .main-canvas {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 95%; /* Slightly reduced to ensure it fits */
+    max-height: 95%; /* Slightly reduced to ensure it fits */
     border-radius: 8px;
     object-fit: contain;
   }
@@ -657,13 +657,13 @@
 @media (max-width: 480px) {
   .canvas-container {
     padding: 0;
-    height: calc(100vh - 180px);
-    margin-bottom: 150px;
+    height: calc(100vh - 140px); /* Even more space for the image on small screens */
+    margin-bottom: 120px; /* Reduced margin for bigger image */
   }
 
   .main-canvas {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 98%; /* Allow image to take up more space */
+    max-height: 98%; /* Allow image to take up more space */
   }
 
   .control-panel {
