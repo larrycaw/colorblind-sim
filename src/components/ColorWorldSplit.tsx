@@ -374,10 +374,67 @@ const ColorWorldSplit: React.FC = () => {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
+    
+    // Add touch move and end listeners to document
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('touchend', handleTouchEnd, { passive: false });
+    document.addEventListener('touchcancel', handleTouchEnd, { passive: false });
   };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDragging || !canvasBounds.width) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Only handle single touch events
+    if (e.touches.length !== 1) return;
+
+    // Get the first touch point
+    const touch = e.touches[0];
+    const x = touch.clientX - canvasBounds.left;
+    const percentage = Math.max(
+      0,
+      Math.min(100, (x / canvasBounds.width) * 100)
+    );
+    setSliderPosition(percentage);
+  };
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    document.removeEventListener('touchmove', handleTouchMove);
+    document.removeEventListener('touchend', handleTouchEnd);
+    document.removeEventListener('touchcancel', handleTouchEnd);
+  };
+
+  // Add global touch move handler for better responsiveness
+  useEffect(() => {
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (isDragging && canvasBounds.width) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const touch = e.touches[0];
+        const x = touch.clientX - canvasBounds.left;
+        const percentage = Math.max(
+          0,
+          Math.min(100, (x / canvasBounds.width) * 100)
+        );
+        setSliderPosition(percentage);
+      }
+    };
+
+    if (isDragging) {
+      document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
+    }
+
+    return () => {
+      document.removeEventListener('touchmove', handleGlobalTouchMove);
+    };
+  }, [isDragging, canvasBounds]);
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging || !canvasBounds.width) return;
@@ -391,13 +448,16 @@ const ColorWorldSplit: React.FC = () => {
     setSliderPosition(percentage);
   };
 
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!isDragging || !canvasBounds.width) return;
-    e.preventDefault();
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  };
 
-    // Get the first touch point
-    const touch = e.touches[0];
-    const x = touch.clientX - canvasBounds.left;
+  const handleContainerClick = (e: React.MouseEvent) => {
+    if (!canvasBounds.width) return;
+
+    const x = e.clientX - canvasBounds.left;
     const percentage = Math.max(
       0,
       Math.min(100, (x / canvasBounds.width) * 100)
@@ -405,16 +465,21 @@ const ColorWorldSplit: React.FC = () => {
     setSliderPosition(percentage);
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
+  const handleContainerTouch = (e: React.TouchEvent) => {
+    if (!canvasBounds.width) return;
+    e.preventDefault();
+    e.stopPropagation();
 
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    document.removeEventListener('touchmove', handleTouchMove);
-    document.removeEventListener('touchend', handleTouchEnd);
+    // Only handle single touch events
+    if (e.touches.length !== 1) return;
+
+    const touch = e.touches[0];
+    const x = touch.clientX - canvasBounds.left;
+    const percentage = Math.max(
+      0,
+      Math.min(100, (x / canvasBounds.width) * 100)
+    );
+    setSliderPosition(percentage);
   };
 
   // Add global mouse move handler for better responsiveness
@@ -438,29 +503,6 @@ const ColorWorldSplit: React.FC = () => {
       document.removeEventListener('mousemove', handleGlobalMouseMove);
     };
   }, [isDragging, canvasBounds]);
-
-  const handleContainerClick = (e: React.MouseEvent) => {
-    if (!canvasBounds.width) return;
-
-    const x = e.clientX - canvasBounds.left;
-    const percentage = Math.max(
-      0,
-      Math.min(100, (x / canvasBounds.width) * 100)
-    );
-    setSliderPosition(percentage);
-  };
-
-  const handleContainerTouch = (e: React.TouchEvent) => {
-    if (!canvasBounds.width) return;
-
-    const touch = e.touches[0];
-    const x = touch.clientX - canvasBounds.left;
-    const percentage = Math.max(
-      0,
-      Math.min(100, (x / canvasBounds.width) * 100)
-    );
-    setSliderPosition(percentage);
-  };
 
   const handleTypeChange = (type: ColorblindType) => {
     setSelectedType(type);
@@ -512,130 +554,139 @@ const ColorWorldSplit: React.FC = () => {
 
   return (
     <div className='color-world-split'>
-      {/* Full-screen canvas container */}
-      <div
-        ref={containerRef}
-        className='canvas-container'
-        onClick={handleContainerClick}
-        onTouchStart={handleContainerTouch}
-      >
-        {uploadedImage ? (
-          <>
-            <canvas ref={canvasRef} className='main-canvas' />
+      <div className='main-content-wrapper'>
+        {/* Full-screen canvas container */}
+        <div
+          ref={containerRef}
+          className='canvas-container'
+          onClick={handleContainerClick}
+          onTouchStart={handleContainerTouch}
+          onTouchMove={(e) => e.preventDefault()}
+          onTouchEnd={(e) => e.preventDefault()}
+        >
+          {uploadedImage ? (
+            <>
+              <canvas ref={canvasRef} className='main-canvas' />
 
-            {/* Interactive particles */}
-            <ParticleSystem
-              width={canvasBounds.width}
-              height={canvasBounds.height}
-              particleCount={24}
-              colorblindType={selectedType.id as any}
-              visible={showParticles}
-              offsetX={canvasBounds.left}
-              offsetY={canvasBounds.top}
-            />
+              {/* Interactive particles */}
+              <ParticleSystem
+                width={canvasBounds.width}
+                height={canvasBounds.height}
+                particleCount={24}
+                colorblindType={selectedType.id as any}
+                visible={showParticles}
+                offsetX={canvasBounds.left}
+                offsetY={canvasBounds.top}
+              />
 
-            {/* Draggable slider */}
-            <div
-              ref={sliderRef}
-              className='slider-handle'
-              style={{
-                left: `${canvasBounds.left + (canvasBounds.width * sliderPosition) / 100}px`,
-                transform: 'translateX(-50%)',
-                position: 'fixed',
-                top: `${canvasBounds.top}px`,
-                height: `${canvasBounds.height}px`,
-                zIndex: 20,
-              }}
-              onMouseDown={handleMouseDown}
-              onTouchStart={handleTouchStart}
-            >
-              <div className='slider-line' />
-              <div className='slider-grip' />
-            </div>
-
-            {/* Split indicator */}
-            <div 
-              className='split-indicator'
-              style={{
-                position: 'absolute',
-                top: '10px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 30,
-              }}
-            >
-              <div className='indicator-left'>Normal Vision</div>
-              <div className='indicator-right'>{selectedType.name}</div>
-            </div>
-          </>
-        ) : null}
-      </div>
-
-      {/* Controls overlay - only show when not on main menu */}
-      {!showMainMenu && (
-        <div className='controls-overlay'>
-          <div className='control-panel'>
-            <div className='type-selector'>
-              <h3>Colorblind Type</h3>
-              <div className='type-buttons'>
-                {colorblindTypes.map(type => (
-                  <motion.button
-                    key={type.id}
-                    onClick={() => handleTypeChange(type)}
-                    className={`type-button ${selectedType.id === type.id ? 'active' : ''}`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onMouseEnter={e => handleTooltipShow(type.description, e)}
-                    onMouseLeave={handleTooltipHide}
-                  >
-                    {type.name}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
-            <div className='particle-controls'>
-              <h3>Particles</h3>
-              <motion.button
-                onClick={() => setShowParticles(!showParticles)}
-                className={`particle-toggle ${showParticles ? 'active' : ''}`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              {/* Draggable slider */}
+              <div
+                ref={sliderRef}
+                className='slider-handle'
+                style={{
+                  left: `${canvasBounds.left + (canvasBounds.width * sliderPosition) / 100}px`,
+                  transform: 'translateX(-50%)',
+                  position: 'fixed',
+                  top: `${canvasBounds.top}px`,
+                  height: `${canvasBounds.height}px`,
+                  zIndex: 20,
+                }}
+                onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
               >
-                {showParticles ? 'Hide' : 'Show'} Particles
-              </motion.button>
-            </div>
+                <div className='slider-line' />
+                <div className='slider-grip' />
+                {/* Invisible touch area for better mobile interaction */}
+                <div 
+                  className='slider-touch-area'
+                  style={{
+                    position: 'absolute',
+                    left: '-20px',
+                    top: '0',
+                    width: '40px',
+                    height: '100%',
+                    zIndex: 25,
+                  }}
+                  onMouseDown={handleMouseDown}
+                  onTouchStart={handleTouchStart}
+                />
+              </div>
 
-            {uploadedImage && (
-              <>
-                <div className='upload-section'>
-                  <input
-                    type='file'
-                    accept='image/*'
-                    onChange={handleImageUpload}
-                    id='change-image'
-                    className='file-input'
-                  />
-                  <label htmlFor='change-image' className='change-button'>
-                    Change Image
-                  </label>
-                </div>
-
-                <div className='menu-section'>
-                  <motion.button
-                    onClick={handleMainMenu}
-                    className='menu-button'
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Main Menu
-                  </motion.button>
-                </div>
-              </>
-            )}
-          </div>
+              {/* Split indicator */}
+              <div className='split-indicator'>
+                <div className='indicator-left'>Normal Vision</div>
+                <div className='indicator-right'>{selectedType.name}</div>
+              </div>
+            </>
+          ) : null}
         </div>
-      )}
+
+        {/* Controls overlay - only show when not on main menu */}
+        {!showMainMenu && (
+          <div className='controls-overlay'>
+            <div className='control-panel'>
+              <div className='type-selector'>
+                <h3>Colorblind Type</h3>
+                <div className='type-buttons'>
+                  {colorblindTypes.map(type => (
+                    <motion.button
+                      key={type.id}
+                      onClick={() => handleTypeChange(type)}
+                      className={`type-button ${selectedType.id === type.id ? 'active' : ''}`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onMouseEnter={e => handleTooltipShow(type.description, e)}
+                      onMouseLeave={handleTooltipHide}
+                    >
+                      {type.name}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              <div className='particle-controls'>
+                <h3>Particles</h3>
+                <motion.button
+                  onClick={() => setShowParticles(!showParticles)}
+                  className={`particle-toggle ${showParticles ? 'active' : ''}`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {showParticles ? 'Hide' : 'Show'} Particles
+                </motion.button>
+              </div>
+
+              {uploadedImage && (
+                <>
+                  <div className='upload-section'>
+                    <input
+                      type='file'
+                      accept='image/*'
+                      onChange={handleImageUpload}
+                      id='change-image'
+                      className='file-input'
+                    />
+                    <label htmlFor='change-image' className='change-button'>
+                      Change Image
+                    </label>
+                  </div>
+
+                  <div className='menu-section'>
+                    <motion.button
+                      onClick={handleMainMenu}
+                      className='menu-button'
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Main Menu
+                    </motion.button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Custom Tooltip */}
       {tooltip && (
