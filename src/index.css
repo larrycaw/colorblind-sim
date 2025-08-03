@@ -87,3 +87,57 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  html {
+    /* Prevent zoom on input focus on iOS */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
+  body {
+    /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+    /* Prevent pull-to-refresh on mobile */
+    overscroll-behavior: none;
+  }
+
+  /* Improve touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text selection on interactive elements */
+  .slider-handle,
+  .slider-grip,
+  .type-button,
+  .particle-toggle,
+  .upload-button,
+  .demo-button,
+  .change-button,
+  .menu-button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Improve scrolling performance */
+  .control-panel {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Prevent viewport issues on mobile */
+@media screen and (max-width: 768px) {
+  html, body {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+}

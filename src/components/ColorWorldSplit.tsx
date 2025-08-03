@@ -247,14 +247,27 @@ const ColorWorldSplit: React.FC = () => {
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
-      // Update canvas bounds for slider positioning
-      const canvasRect = canvas.getBoundingClientRect();
-      setCanvasBounds({
-        left: canvasRect.left,
-        width: canvasRect.width,
-        top: canvasRect.top,
-        height: canvasRect.height,
-      });
+             // Update canvas bounds for slider positioning
+       const canvasRect = canvas.getBoundingClientRect();
+       setCanvasBounds({
+         left: canvasRect.left,
+         width: canvasRect.width,
+         top: canvasRect.top,
+         height: canvasRect.height,
+       });
+
+       // Force a small delay to ensure DOM is updated before calculating bounds
+       setTimeout(() => {
+         if (canvasRef.current) {
+           const updatedRect = canvasRef.current.getBoundingClientRect();
+           setCanvasBounds({
+             left: updatedRect.left,
+             width: updatedRect.width,
+             top: updatedRect.top,
+             height: updatedRect.height,
+           });
+         }
+       }, 0);
 
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -321,11 +334,49 @@ const ColorWorldSplit: React.FC = () => {
     renderImage();
   }, [renderImage]);
 
+  // Update canvas bounds on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (canvasRef.current && containerRef.current) {
+        const canvasRect = canvasRef.current.getBoundingClientRect();
+        setCanvasBounds({
+          left: canvasRect.left,
+          width: canvasRect.width,
+          top: canvasRect.top,
+          height: canvasRect.height,
+        });
+        
+        // Force a re-render after bounds update
+        setTimeout(() => {
+          renderImage();
+        }, 0);
+      }
+    };
+
+    // Initial bounds update
+    handleResize();
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [uploadedImage, renderImage]); // Re-run when image changes or renderImage changes
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsDragging(true);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -340,10 +391,30 @@ const ColorWorldSplit: React.FC = () => {
     setSliderPosition(percentage);
   };
 
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDragging || !canvasBounds.width) return;
+    e.preventDefault();
+
+    // Get the first touch point
+    const touch = e.touches[0];
+    const x = touch.clientX - canvasBounds.left;
+    const percentage = Math.max(
+      0,
+      Math.min(100, (x / canvasBounds.width) * 100)
+    );
+    setSliderPosition(percentage);
+  };
+
   const handleMouseUp = () => {
     setIsDragging(false);
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    document.removeEventListener('touchmove', handleTouchMove);
+    document.removeEventListener('touchend', handleTouchEnd);
   };
 
   // Add global mouse move handler for better responsiveness
@@ -372,6 +443,18 @@ const ColorWorldSplit: React.FC = () => {
     if (!canvasBounds.width) return;
 
     const x = e.clientX - canvasBounds.left;
+    const percentage = Math.max(
+      0,
+      Math.min(100, (x / canvasBounds.width) * 100)
+    );
+    setSliderPosition(percentage);
+  };
+
+  const handleContainerTouch = (e: React.TouchEvent) => {
+    if (!canvasBounds.width) return;
+
+    const touch = e.touches[0];
+    const x = touch.clientX - canvasBounds.left;
     const percentage = Math.max(
       0,
       Math.min(100, (x / canvasBounds.width) * 100)
@@ -434,6 +517,7 @@ const ColorWorldSplit: React.FC = () => {
         ref={containerRef}
         className='canvas-container'
         onClick={handleContainerClick}
+        onTouchStart={handleContainerTouch}
       >
         {uploadedImage ? (
           <>
@@ -463,13 +547,23 @@ const ColorWorldSplit: React.FC = () => {
                 zIndex: 20,
               }}
               onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
             >
               <div className='slider-line' />
               <div className='slider-grip' />
             </div>
 
             {/* Split indicator */}
-            <div className='split-indicator'>
+            <div 
+              className='split-indicator'
+              style={{
+                position: 'absolute',
+                top: '10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 30,
+              }}
+            >
               <div className='indicator-left'>Normal Vision</div>
               <div className='indicator-right'>{selectedType.name}</div>
             </div>
