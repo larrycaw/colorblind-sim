@@ -481,14 +481,16 @@
     gap: 0;
     padding: 0;
     max-width: 100%;
+    padding-bottom: 160px; /* Ensure space for bottom controls */
   }
 
   .canvas-container {
     padding: 0;
-    height: calc(100vh - 40px); /* Very minimal space for controls */
+    height: calc(100vh - 200px); /* More space for controls */
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 160px; /* Push image up from bottom controls */
   }
 
   .main-canvas {
@@ -587,10 +589,10 @@
   }
 
   .slider-grip {
-    width: 48px;
-    height: 48px;
-    min-width: 44px;
-    min-height: 44px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
   }
 
   .slider-line {
@@ -655,7 +657,8 @@
 @media (max-width: 480px) {
   .canvas-container {
     padding: 0;
-    height: calc(100vh - 30px);
+    height: calc(100vh - 180px);
+    margin-bottom: 150px;
   }
 
   .main-canvas {
@@ -824,6 +827,14 @@
     font-size: 0.75em;
     padding: 0.4rem 0.6rem;
     min-height: 32px;
+  }
+
+  /* Landscape slider adjustments */
+  .slider-grip {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
   }
 }
 
