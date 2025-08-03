@@ -48,21 +48,9 @@ const ParticleSystem: React.FC<ParticleSystemProps> = ({
 
   // Initialize particles (only when component mounts or when dimensions/particle count changes)
   useEffect(() => {
-    if (!canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas size
-    canvas.width = width;
-    canvas.height = height;
-
-    // Only create particles if they don't exist or if dimensions/particle count changed
+    // Create particles even if canvas doesn't exist yet (for when visible becomes true)
     if (particlesRef.current.length === 0 || 
-        particlesRef.current.length !== particleCount ||
-        canvas.width !== width || 
-        canvas.height !== height) {
+        particlesRef.current.length !== particleCount) {
       
       // Create particles
       const particles: Particle[] = [];
@@ -84,6 +72,19 @@ const ParticleSystem: React.FC<ParticleSystemProps> = ({
     }
   }, [width, height, particleCount, colorblindType]);
 
+  // Initialize canvas when it becomes available
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size
+    canvas.width = width;
+    canvas.height = height;
+  }, [width, height]);
+
   // Update particle colors when colorblind type changes (without recreating particles)
   useEffect(() => {
     if (particlesRef.current.length > 0) {
@@ -96,7 +97,7 @@ const ParticleSystem: React.FC<ParticleSystemProps> = ({
 
   // Handle animation
   useEffect(() => {
-    if (!canvasRef.current || !visible) {
+    if (!visible) {
       // Stop animation if not visible
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -105,9 +106,16 @@ const ParticleSystem: React.FC<ParticleSystemProps> = ({
       return;
     }
 
+    // Wait for canvas to be available
+    if (!canvasRef.current) return;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Ensure canvas is properly sized
+    canvas.width = width;
+    canvas.height = height;
 
     const animate = () => {
       if (!visible) return;
