@@ -75,18 +75,7 @@
   padding: 2rem;
 }
 
-.particle-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 
 /* Error Boundary */
 .error-boundary {
@@ -442,33 +431,7 @@
   color: white;
 }
 
-.particle-controls {
-  margin-bottom: 1.5rem;
-}
 
-.particle-toggle {
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9em;
-  text-align: center;
-  width: 100%;
-}
-
-.particle-toggle:hover {
-  background: rgba(100, 108, 255, 0.2);
-  border-color: #646cff;
-}
-
-.particle-toggle.active {
-  background: linear-gradient(135deg, #646cff, #535bf2);
-  border-color: #646cff;
-  color: white;
-}
 
 .upload-section {
   display: flex;
@@ -614,17 +577,7 @@
     text-align: center;
   }
 
-  .particle-controls {
-    margin-top: 0.4rem;
-    margin-bottom: 0.75rem;
-  }
 
-  .particle-toggle {
-    font-size: 0.8em;
-    padding: 0.5rem 0.8rem;
-    width: 100%;
-    min-height: 40px;
-  }
 
   .upload-section,
   .menu-section {
@@ -743,11 +696,7 @@
     text-align: center;
   }
 
-  .particle-toggle {
-    font-size: 0.75em;
-    padding: 0.4rem 0.6rem;
-    min-height: 36px;
-  }
+
 
   .split-indicator {
     font-size: 0.7em;
@@ -771,7 +720,6 @@
     font-size: 0.9em;
   }
 
-  .particle-toggle,
   .change-button,
   .menu-button {
     font-size: 1.2rem;
@@ -887,16 +835,7 @@
     text-align: center;
   }
 
-  .particle-controls {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
 
-  .particle-toggle {
-    font-size: 0.75em;
-    padding: 0.4rem 0.6rem;
-    min-height: 32px;
-  }
 
   /* Landscape slider adjustments */
   .slider-grip {

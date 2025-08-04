@@ -2,14 +2,14 @@
 
 > **Experience the world through different eyes** 👁️
 
-A modern web application that simulates different types of color vision deficiencies, allowing users to experience how images appear to people with various forms of colorblindness. Features an interactive "Color World Split" with a draggable slider, particle effects, and real-time color transformation.
+A modern web application that simulates different types of color vision deficiencies, allowing users to experience how images appear to people with various forms of colorblindness. Features an interactive "Color World Split" with a draggable slider and real-time color transformation.
 
 ## ✨ Features
 
 - **🎮 Interactive Color World Split**: Drag the slider to compare original vs. filtered images in real-time
 - **🎨 Multiple Colorblind Types**: Simulate Protanopia (red-blind), Deuteranopia (green-blind), and Tritanopia (blue-blind)
 - **📸 Image Upload & Demo**: Upload your own images or try the built-in demo with vibrant landscapes
-- **✨ Particle Effects**: Animated particles that change color based on the selected colorblind type
+
 - **🏠 Main Menu Navigation**: Easy navigation between upload, demo, and simulation modes
 - **🎨 Modern UI**: Beautiful, responsive design with smooth animations using Framer Motion
 - **⚡ Real-time Processing**: Instant color transformation using canvas and matrix transformations
@@ -27,7 +27,7 @@ A modern web application that simulates different types of color vision deficien
 ### 🖼️ Image Processing
 
 - **🔢 Matrix transformations** - Efficient colorblind simulation using 3x3 transformation matrices
-- **🎨 HTML5 Canvas** - Real-time image manipulation and particle rendering
+- **🎨 HTML5 Canvas** - Real-time image manipulation and rendering
 - **🎚️ Split slider functionality** - Interactive before/after comparison with precise control
 
 ## 🚀 Getting Started
@@ -72,7 +72,7 @@ npm run dev
 1. **🏠 Main Menu**: Start by uploading an image or trying the demo
 2. **🎨 Choose Colorblind Type**: Select from Protanopia, Deuteranopia, or Tritanopia
 3. **🎚️ Use the Slider**: Drag the slider to compare the original image with the filtered version
-4. **✨ Toggle Particles**: Show/hide animated particles that demonstrate color perception
+
 5. **🔍 Explore**: Try different images and colorblind types to understand how color vision affects perception
 
 ## 👁️ Understanding Colorblindness
@@ -174,13 +174,8 @@ The application uses 3x3 transformation matrices to simulate colorblindness:
 - Images are loaded into HTML5 Canvas
 - Pixel data is processed using transformation matrices
 - Real-time rendering with split slider functionality
-- Particle system demonstrates color perception differences
 
-### ✨ Particle System
 
-- Animated particles change color based on selected colorblind type
-- Particles are constrained to image bounds
-- Demonstrates how different colors appear to people with colorblindness
 
 ---
 
