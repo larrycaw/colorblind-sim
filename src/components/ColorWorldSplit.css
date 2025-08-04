@@ -562,7 +562,6 @@
     top: auto;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
     z-index: 100;
     transform: none !important; /* Override desktop transform on mobile */
   }
@@ -583,8 +582,8 @@
   }
 
   .control-panel h3 {
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
+    font-size: 1.2rem;
+    margin: 0 0 1rem 0;
   }
 
   .type-buttons {
@@ -721,12 +720,12 @@
   }
 
   .control-panel h3 {
-    font-size: 0.85rem;
-    margin-bottom: 0.3rem;
+    font-size: 1.5rem;
+    margin: 0 0 1rem 0;
   }
 
   .type-button {
-    font-size: 0.75em;
+    font-size: 1.2rem;
     padding: 0.4rem 0.6rem;
     white-space: normal;
     word-wrap: break-word;
@@ -764,7 +763,7 @@
   .particle-toggle,
   .change-button,
   .menu-button {
-    font-size: 0.75em;
+    font-size: 1.2rem;
     padding: 0.4rem 0.6rem;
     min-height: 36px;
   }
@@ -914,6 +913,10 @@
     padding: 0.3rem 0.7rem !important;
     min-height: 1.5em !important;
     line-height: 1.2 !important;
+  }
+
+  .control-panel h3 {
+    text-align: center !important;
   }
 }
 
