@@ -209,37 +209,32 @@
 /* Split Indicator */
 .split-indicator {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   background: rgba(0, 0, 0, 0.8);
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   pointer-events: none;
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
 }
 
 .indicator-left,
 .indicator-right {
   color: white;
-  font-size: 0.9em;
+  font-size: 0.8em;
   font-weight: 500;
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 1.5em;
-  line-height: 1.2;
+  min-height: 1.3em;
+  line-height: 1.1;
   white-space: normal;
   word-wrap: break-word;
-  max-width: 180px;
+  max-width: 150px;
 }
 
 .indicator-left {
@@ -550,13 +545,8 @@
 
   /* Center the split indicator */
   .split-indicator {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 30;
-    font-size: 1em;
-    padding: 0.5rem 1rem;
+    font-size: 0.9em;
+    padding: 0.4rem 0.8rem;
   }
 
   /* Mobile-optimized controls */
@@ -661,7 +651,6 @@
   .split-indicator {
     font-size: 0.75em;
     padding: 0.25rem 0.6rem;
-    top: 10px;
   }
 
   /* Mobile upload screen */
@@ -752,16 +741,15 @@
   }
 
   .split-indicator {
-    top: 10px;
-    font-size: 0.8em;
-    padding: 0.3rem 0.6rem;
+    font-size: 0.7em;
+    padding: 0.25rem 0.5rem;
   }
 
   .indicator-left,
   .indicator-right {
-    max-width: 100px;
-    font-size: 0.8em;
-    padding: 0.25rem 0.5rem;
+    max-width: 80px;
+    font-size: 0.7em;
+    padding: 0.2rem 0.4rem;
   }
 
   .upload-content h2 {
@@ -805,20 +793,20 @@
   }
 
   .split-indicator {
-    top: 5px;
-    font-size: 0.7em;
-    padding: 0.2rem 0.4rem;
-    z-index: 40;
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
+    font-size: 0.6em;
+    padding: 0.15rem 0.3rem;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 15px;
   }
 
   .indicator-left,
   .indicator-right {
-    max-width: 80px;
-    font-size: 0.65em;
-    padding: 0.15rem 0.4rem;
+    max-width: 60px;
+    font-size: 0.55em;
+    padding: 0.1rem 0.3rem;
+    min-height: 1.2em;
+    line-height: 1.1;
   }
 
   .controls-overlay {
@@ -903,6 +891,24 @@
     height: 24px;
     min-width: 24px;
     min-height: 24px;
+  }
+}
+
+/* Mobile portrait orientation - make indicators bigger */
+@media (max-width: 768px) and (orientation: portrait) {
+  .split-indicator {
+    font-size: 1em !important;
+    padding: 0.5rem 1rem !important;
+    gap: 1.8rem !important;
+  }
+
+  .indicator-left,
+  .indicator-right {
+    max-width: 120px !important;
+    font-size: 0.9em !important;
+    padding: 0.3rem 0.7rem !important;
+    min-height: 1.5em !important;
+    line-height: 1.2 !important;
   }
 }
 

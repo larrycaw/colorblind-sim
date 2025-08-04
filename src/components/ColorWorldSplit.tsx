@@ -613,7 +613,16 @@ const ColorWorldSplit: React.FC = () => {
               </div>
 
               {/* Split indicator */}
-              <div className='split-indicator'>
+              <div 
+                className='split-indicator'
+                style={{
+                  position: 'fixed',
+                  top: window.innerWidth <= 768 ? '15px' : '8px',
+                  left: `${canvasBounds.left + canvasBounds.width / 2}px`,
+                  transform: 'translateX(-50%)',
+                  zIndex: 30,
+                }}
+              >
                 <div className='indicator-left'>Normal Vision</div>
                 <div className='indicator-right'>{selectedType.name}</div>
               </div>
