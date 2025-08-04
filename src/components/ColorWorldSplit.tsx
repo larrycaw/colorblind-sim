@@ -226,14 +226,18 @@ const ColorWorldSplit: React.FC = () => {
 
     const img = new Image();
     img.onload = () => {
-      // Calculate canvas size to maintain aspect ratio but with a smaller size
+      // Get device pixel ratio for high-DPI support
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      
+      // Calculate canvas size to maintain aspect ratio with better quality
       const containerRect = container.getBoundingClientRect();
       const containerAspect = containerRect.width / containerRect.height;
       const imageAspect = img.width / img.height;
 
-             // Use a larger size factor for better quality (0.9 = 90% of container size)
-       const sizeFactor = 0.9;
+      // Use a larger size factor for better quality, especially on mobile
+      const sizeFactor = window.innerWidth <= 768 ? 0.95 : 0.9; // Larger factor on mobile
       let canvasWidth, canvasHeight;
+      
       if (imageAspect > containerAspect) {
         // Image is wider than container
         canvasWidth = containerRect.width * sizeFactor;
@@ -244,31 +248,38 @@ const ColorWorldSplit: React.FC = () => {
         canvasWidth = containerRect.height * sizeFactor * imageAspect;
       }
 
-             // Set canvas dimensions directly for better quality
-       canvas.width = canvasWidth;
-       canvas.height = canvasHeight;
+      // Set canvas dimensions with high-DPI support
+      canvas.width = canvasWidth * devicePixelRatio;
+      canvas.height = canvasHeight * devicePixelRatio;
+      
+      // Scale the context to account for device pixel ratio
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+      
+      // Set the CSS size to maintain the visual size
+      canvas.style.width = `${canvasWidth}px`;
+      canvas.style.height = `${canvasHeight}px`;
 
-             // Update canvas bounds for slider positioning
-       const canvasRect = canvas.getBoundingClientRect();
-       setCanvasBounds({
-         left: canvasRect.left,
-         width: canvasRect.width,
-         top: canvasRect.top,
-         height: canvasRect.height,
-       });
+      // Update canvas bounds for slider positioning
+      const canvasRect = canvas.getBoundingClientRect();
+      setCanvasBounds({
+        left: canvasRect.left,
+        width: canvasRect.width,
+        top: canvasRect.top,
+        height: canvasRect.height,
+      });
 
-       // Force a small delay to ensure DOM is updated before calculating bounds
-       setTimeout(() => {
-         if (canvasRef.current) {
-           const updatedRect = canvasRef.current.getBoundingClientRect();
-           setCanvasBounds({
-             left: updatedRect.left,
-             width: updatedRect.width,
-             top: updatedRect.top,
-             height: updatedRect.height,
-           });
-         }
-       }, 0);
+      // Force a small delay to ensure DOM is updated before calculating bounds
+      setTimeout(() => {
+        if (canvasRef.current) {
+          const updatedRect = canvasRef.current.getBoundingClientRect();
+          setCanvasBounds({
+            left: updatedRect.left,
+            width: updatedRect.width,
+            top: updatedRect.top,
+            height: updatedRect.height,
+          });
+        }
+      }, 0);
 
       // Clear canvas
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -280,7 +291,7 @@ const ColorWorldSplit: React.FC = () => {
       if (splitX <= 0) {
         // If slider is at 0%, show only filtered image
         ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
-        const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+        const imageData = ctx.getImageData(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
         const filteredData = applyColorblindFilter(
           imageData,
           selectedType.matrix
@@ -314,16 +325,16 @@ const ColorWorldSplit: React.FC = () => {
       const rightWidth = canvasWidth - splitX;
       if (rightWidth > 0) {
         const imageData = ctx.getImageData(
-          splitX,
+          splitX * devicePixelRatio,
           0,
-          rightWidth,
-          canvasHeight
+          rightWidth * devicePixelRatio,
+          canvasHeight * devicePixelRatio
         );
         const filteredData = applyColorblindFilter(
           imageData,
           selectedType.matrix
         );
-        ctx.putImageData(filteredData, splitX, 0);
+        ctx.putImageData(filteredData, splitX * devicePixelRatio, 0);
       }
       ctx.restore();
     };
