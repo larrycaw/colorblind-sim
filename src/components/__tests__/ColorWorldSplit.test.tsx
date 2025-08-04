@@ -5,7 +5,7 @@ import ColorWorldSplit from '../ColorWorldSplit';
 describe('ColorWorldSplit', () => {
   it('renders main menu by default', () => {
     render(<ColorWorldSplit />);
-    
+
     // Check for main menu elements
     expect(screen.getByText('Choose Image')).toBeInTheDocument();
     expect(screen.getByText('Try Demo')).toBeInTheDocument();
@@ -14,16 +14,22 @@ describe('ColorWorldSplit', () => {
 
   it('displays upload content', () => {
     render(<ColorWorldSplit />);
-    
+
     // Check for upload content
-    expect(screen.getByText('Upload a vibrant landscape image to experience the colorblind simulation')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Upload a vibrant landscape image to experience the colorblind simulation'
+      )
+    ).toBeInTheDocument();
   });
 
   it('has proper button elements', () => {
     render(<ColorWorldSplit />);
-    
+
     // Check for proper button elements
-    expect(screen.getByRole('button', { name: 'Try Demo' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Try Demo' })
+    ).toBeInTheDocument();
     expect(screen.getByLabelText('Choose Image')).toBeInTheDocument();
   });
-}); 
+});

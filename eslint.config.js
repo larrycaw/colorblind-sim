@@ -39,7 +39,10 @@ export default [
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         requestAnimationFrame: 'readonly',
-        cancelAnimationFrame: 'readonly'
+        cancelAnimationFrame: 'readonly',
+        // Vitest globals
+        vi: 'readonly',
+        global: 'readonly'
       }
     },
     plugins: {

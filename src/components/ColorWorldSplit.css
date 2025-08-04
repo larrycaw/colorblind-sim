@@ -54,13 +54,13 @@
     max-width: 95%;
     max-height: 95%;
   }
-  
+
   .canvas-container {
     width: 100%;
     height: 100%;
     padding: 0.5rem;
   }
-  
+
   .main-content-wrapper {
     padding: 0.5rem;
   }
@@ -74,8 +74,6 @@
   height: 100%;
   padding: 2rem;
 }
-
-
 
 /* Error Boundary */
 .error-boundary {
@@ -363,7 +361,7 @@
   .control-toggle {
     display: block; /* Show toggle button on desktop */
   }
-  
+
   .controls-overlay {
     position: fixed;
     top: 0;
@@ -430,8 +428,6 @@
   border-color: #646cff;
   color: white;
 }
-
-
 
 .upload-section {
   display: flex;
@@ -539,7 +535,7 @@
     z-index: 100;
     transform: none !important; /* Override desktop transform on mobile */
   }
-  
+
   /* Hide toggle button on mobile */
   .control-toggle {
     display: none !important;
@@ -576,8 +572,6 @@
     word-wrap: break-word;
     text-align: center;
   }
-
-
 
   .upload-section,
   .menu-section {
@@ -665,7 +659,9 @@
 @media (max-width: 480px) {
   .canvas-container {
     padding: 0;
-    height: calc(100vh - 140px); /* Even more space for the image on small screens */
+    height: calc(
+      100vh - 140px
+    ); /* Even more space for the image on small screens */
     margin-bottom: 120px; /* Reduced margin for bigger image */
   }
 
@@ -695,8 +691,6 @@
     word-wrap: break-word;
     text-align: center;
   }
-
-
 
   .split-indicator {
     font-size: 0.7em;
@@ -782,7 +776,7 @@
     z-index: 100;
     transform: none !important; /* Override desktop transform on mobile landscape */
   }
-  
+
   /* Hide toggle button on mobile landscape */
   .control-toggle {
     display: none !important;
@@ -834,8 +828,6 @@
     word-wrap: break-word;
     text-align: center;
   }
-
-
 
   /* Landscape slider adjustments */
   .slider-grip {
