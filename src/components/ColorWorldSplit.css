@@ -32,7 +32,7 @@
   max-width: 1400px;
   width: 100%;
   height: 100%;
-  padding: 2rem;
+  padding: 2rem 0rem 2rem 2rem;
   position: relative;
 }
 
@@ -338,8 +338,8 @@
 /* Control Toggle Button */
 .control-toggle {
   position: fixed;
-  top: 2rem;
-  right: 2rem;
+  top: 0.5rem;
+  right: 0.5rem;
   z-index: 60;
   display: none; /* Hidden by default, shown only on desktop */
 }
@@ -377,21 +377,27 @@
   
   .controls-overlay {
     position: fixed;
-    top: 2rem;
-    right: 2rem;
+    top: 0;
+    right: 0;
     z-index: 50;
     transform: translateX(0);
     transition: transform 0.3s ease;
+    height: 100vh;
+    display: flex;
+    align-items: center;
   }
 }
 
 .control-panel {
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(15px);
-  border-radius: 16px;
+  border-radius: 16px 0 0 16px;
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: none;
   min-width: 250px;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .control-panel h3 {
@@ -417,7 +423,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9em;
-  text-align: left;
+  text-align: center;
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .type-button:hover {
