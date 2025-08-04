@@ -33,6 +33,11 @@ export default [
         ImageData: 'readonly',
         Image: 'readonly',
         MouseEvent: 'readonly',
+        TouchEvent: 'readonly',
+        Touch: 'readonly',
+        TouchList: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
         requestAnimationFrame: 'readonly',
         cancelAnimationFrame: 'readonly'
       }

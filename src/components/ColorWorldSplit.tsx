@@ -2,6 +2,13 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import './ColorWorldSplit.css';
 
+// Global type declarations for browser APIs
+declare global {
+  interface Window {
+    setTimeout: typeof setTimeout;
+  }
+}
+
 interface ColorblindType {
   id: string;
   name: string;
@@ -227,7 +234,7 @@ const ColorWorldSplit: React.FC = () => {
     img.onload = () => {
       // Get device pixel ratio for high-DPI support
       const devicePixelRatio = window.devicePixelRatio || 1;
-      
+
       // Calculate canvas size to maintain aspect ratio with better quality
       const containerRect = container.getBoundingClientRect();
       const containerAspect = containerRect.width / containerRect.height;
@@ -236,7 +243,7 @@ const ColorWorldSplit: React.FC = () => {
       // Use a larger size factor for better quality, especially on mobile
       const sizeFactor = window.innerWidth <= 768 ? 0.95 : 0.9; // Larger factor on mobile
       let canvasWidth, canvasHeight;
-      
+
       if (imageAspect > containerAspect) {
         // Image is wider than container
         canvasWidth = containerRect.width * sizeFactor;
@@ -250,10 +257,10 @@ const ColorWorldSplit: React.FC = () => {
       // Set canvas dimensions with high-DPI support
       canvas.width = canvasWidth * devicePixelRatio;
       canvas.height = canvasHeight * devicePixelRatio;
-      
+
       // Scale the context to account for device pixel ratio
       ctx.scale(devicePixelRatio, devicePixelRatio);
-      
+
       // Set the CSS size to maintain the visual size
       canvas.style.width = `${canvasWidth}px`;
       canvas.style.height = `${canvasHeight}px`;
@@ -290,7 +297,12 @@ const ColorWorldSplit: React.FC = () => {
       if (splitX <= 0) {
         // If slider is at 0%, show only filtered image
         ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
-        const imageData = ctx.getImageData(0, 0, canvasWidth * devicePixelRatio, canvasHeight * devicePixelRatio);
+        const imageData = ctx.getImageData(
+          0,
+          0,
+          canvasWidth * devicePixelRatio,
+          canvasHeight * devicePixelRatio
+        );
         const filteredData = applyColorblindFilter(
           imageData,
           selectedType.matrix
@@ -356,7 +368,7 @@ const ColorWorldSplit: React.FC = () => {
           top: canvasRect.top,
           height: canvasRect.height,
         });
-        
+
         // Force a re-render after bounds update
         setTimeout(() => {
           renderImage();
@@ -369,7 +381,7 @@ const ColorWorldSplit: React.FC = () => {
 
     // Add resize listener
     window.addEventListener('resize', handleResize);
-    
+
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -387,11 +399,13 @@ const ColorWorldSplit: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
-    
+
     // Add touch move and end listeners to document
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', handleTouchEnd, { passive: false });
-    document.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+    document.addEventListener('touchcancel', handleTouchEnd, {
+      passive: false,
+    });
   };
 
   const handleTouchMove = (e: TouchEvent) => {
@@ -427,7 +441,7 @@ const ColorWorldSplit: React.FC = () => {
       if (isDragging && canvasBounds.width) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const touch = e.touches[0];
         const x = touch.clientX - canvasBounds.left;
         const percentage = Math.max(
@@ -439,7 +453,9 @@ const ColorWorldSplit: React.FC = () => {
     };
 
     if (isDragging) {
-      document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
+      document.addEventListener('touchmove', handleGlobalTouchMove, {
+        passive: false,
+      });
     }
 
     return () => {
@@ -572,8 +588,23 @@ const ColorWorldSplit: React.FC = () => {
           className='canvas-container'
           onClick={handleContainerClick}
           onTouchStart={handleContainerTouch}
-          onTouchMove={(e) => e.preventDefault()}
-          onTouchEnd={(e) => e.preventDefault()}
+          onTouchMove={e => e.preventDefault()}
+          onTouchEnd={e => e.preventDefault()}
+          role='button'
+          tabIndex={0}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              // Simulate mouse click for keyboard accessibility
+              const rect = e.currentTarget.getBoundingClientRect();
+              const simulatedEvent = {
+                clientX: rect.left + rect.width / 2,
+                clientY: rect.top + rect.height / 2,
+                preventDefault: () => {},
+              } as React.MouseEvent;
+              handleContainerClick(simulatedEvent);
+            }
+          }}
         >
           {uploadedImage ? (
             <>
@@ -593,11 +624,26 @@ const ColorWorldSplit: React.FC = () => {
                 }}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
+                role='slider'
+                tabIndex={0}
+                aria-label='Image split slider'
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={sliderPosition}
+                onKeyDown={e => {
+                  if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    setSliderPosition(Math.max(0, sliderPosition - 1));
+                  } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    setSliderPosition(Math.min(100, sliderPosition + 1));
+                  }
+                }}
               >
                 <div className='slider-line' />
                 <div className='slider-grip' />
                 {/* Invisible touch area for better mobile interaction */}
-                <div 
+                <div
                   className='slider-touch-area'
                   style={{
                     position: 'absolute',
@@ -609,11 +655,26 @@ const ColorWorldSplit: React.FC = () => {
                   }}
                   onMouseDown={handleMouseDown}
                   onTouchStart={handleTouchStart}
+                  role='button'
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      // Simulate mouse down for keyboard accessibility
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const simulatedEvent = {
+                        clientX: rect.left + rect.width / 2,
+                        clientY: rect.top + rect.height / 2,
+                        preventDefault: () => {},
+                      } as React.MouseEvent;
+                      handleMouseDown(simulatedEvent);
+                    }
+                  }}
                 />
               </div>
 
               {/* Split indicator */}
-              <div 
+              <div
                 className='split-indicator'
                 style={{
                   position: 'fixed',
@@ -647,7 +708,7 @@ const ColorWorldSplit: React.FC = () => {
             </div>
 
             {/* Control panel */}
-            <motion.div 
+            <motion.div
               className='controls-overlay'
               initial={{ x: 0 }}
               animate={{ x: showControlPanel ? 0 : 300 }}
@@ -664,7 +725,9 @@ const ColorWorldSplit: React.FC = () => {
                         className={`type-button ${selectedType.id === type.id ? 'active' : ''}`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onMouseEnter={e => handleTooltipShow(type.description, e)}
+                        onMouseEnter={e =>
+                          handleTooltipShow(type.description, e)
+                        }
                         onMouseLeave={handleTooltipHide}
                       >
                         {type.name}

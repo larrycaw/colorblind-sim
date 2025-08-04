@@ -19,6 +19,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // eslint-disable-next-line no-console
     console.error('Error caught by boundary:', error, errorInfo);
   }
 
@@ -29,7 +30,8 @@ class ErrorBoundary extends Component<Props, State> {
           <div className='error-content'>
             <h2>Something went wrong</h2>
             <p>
-              Don't worry, this is just a demo error. Try refreshing the page.
+              Don&apos;t worry, this is just a demo error. Try refreshing the
+              page.
             </p>
             <button
               onClick={() => window.location.reload()}
