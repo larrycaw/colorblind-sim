@@ -338,13 +338,53 @@
   flex-shrink: 0;
 }
 
+/* Control Toggle Button */
+.control-toggle {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 60;
+  display: none; /* Hidden by default, shown only on desktop */
+}
+
+.toggle-button {
+  width: 40px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 /* Desktop control panel positioning */
 @media (min-width: 769px) and (min-height: 600px) {
+  .control-toggle {
+    display: block; /* Show toggle button on desktop */
+  }
+  
   .controls-overlay {
     position: fixed;
     top: 2rem;
     right: 2rem;
     z-index: 50;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
   }
 }
 
@@ -530,6 +570,12 @@
     backdrop-filter: blur(15px);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     z-index: 100;
+    transform: none !important; /* Override desktop transform on mobile */
+  }
+  
+  /* Hide toggle button on mobile */
+  .control-toggle {
+    display: none !important;
   }
 
   .control-panel {
@@ -785,6 +831,12 @@
     backdrop-filter: blur(15px);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     z-index: 100;
+    transform: none !important; /* Override desktop transform on mobile landscape */
+  }
+  
+  /* Hide toggle button on mobile landscape */
+  .control-toggle {
+    display: none !important;
   }
 
   .control-panel {

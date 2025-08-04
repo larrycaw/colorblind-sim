@@ -53,6 +53,7 @@ const ColorWorldSplit: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [showMainMenu, setShowMainMenu] = useState(true); // Start on main menu
   const [sliderPosition, setSliderPosition] = useState(50);
+  const [showControlPanel, setShowControlPanel] = useState(true); // Control panel visibility
   const [canvasBounds, setCanvasBounds] = useState({
     left: 0,
     width: 0,
@@ -622,56 +623,77 @@ const ColorWorldSplit: React.FC = () => {
 
         {/* Controls overlay - only show when not on main menu */}
         {!showMainMenu && (
-          <div className='controls-overlay'>
-            <div className='control-panel'>
-              <div className='type-selector'>
-                <h3>Colorblind Type</h3>
-                <div className='type-buttons'>
-                  {colorblindTypes.map(type => (
-                    <motion.button
-                      key={type.id}
-                      onClick={() => handleTypeChange(type)}
-                      className={`type-button ${selectedType.id === type.id ? 'active' : ''}`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onMouseEnter={e => handleTooltipShow(type.description, e)}
-                      onMouseLeave={handleTooltipHide}
-                    >
-                      {type.name}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-
-              {uploadedImage && (
-                <>
-                  <div className='upload-section'>
-                    <input
-                      type='file'
-                      accept='image/*'
-                      onChange={handleImageUpload}
-                      id='change-image'
-                      className='file-input'
-                    />
-                    <label htmlFor='change-image' className='change-button'>
-                      Change Image
-                    </label>
-                  </div>
-
-                  <div className='menu-section'>
-                    <motion.button
-                      onClick={handleMainMenu}
-                      className='menu-button'
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Main Menu
-                    </motion.button>
-                  </div>
-                </>
-              )}
+          <>
+            {/* Toggle button for desktop */}
+            <div className='control-toggle'>
+              <motion.button
+                onClick={() => setShowControlPanel(!showControlPanel)}
+                className='toggle-button'
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                title={showControlPanel ? 'Hide Controls' : 'Show Controls'}
+              >
+                {showControlPanel ? '◀' : '▶'}
+              </motion.button>
             </div>
-          </div>
+
+            {/* Control panel */}
+            <motion.div 
+              className='controls-overlay'
+              initial={{ x: 0 }}
+              animate={{ x: showControlPanel ? 0 : 300 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <div className='control-panel'>
+                <div className='type-selector'>
+                  <h3>Colorblind Type</h3>
+                  <div className='type-buttons'>
+                    {colorblindTypes.map(type => (
+                      <motion.button
+                        key={type.id}
+                        onClick={() => handleTypeChange(type)}
+                        className={`type-button ${selectedType.id === type.id ? 'active' : ''}`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onMouseEnter={e => handleTooltipShow(type.description, e)}
+                        onMouseLeave={handleTooltipHide}
+                      >
+                        {type.name}
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                {uploadedImage && (
+                  <>
+                    <div className='upload-section'>
+                      <input
+                        type='file'
+                        accept='image/*'
+                        onChange={handleImageUpload}
+                        id='change-image'
+                        className='file-input'
+                      />
+                      <label htmlFor='change-image' className='change-button'>
+                        Change Image
+                      </label>
+                    </div>
+
+                    <div className='menu-section'>
+                      <motion.button
+                        onClick={handleMainMenu}
+                        className='menu-button'
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Main Menu
+                      </motion.button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </>
         )}
       </div>
 
