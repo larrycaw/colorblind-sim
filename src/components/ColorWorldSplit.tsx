@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import ParticleSystem from './ParticleSystem';
 import './ColorWorldSplit.css';
 
 interface ColorblindType {
@@ -51,7 +50,6 @@ const ColorWorldSplit: React.FC = () => {
     colorblindTypes[0]
   );
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [showParticles, setShowParticles] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showMainMenu, setShowMainMenu] = useState(true); // Start on main menu
   const [sliderPosition, setSliderPosition] = useState(50);
@@ -580,17 +578,6 @@ const ColorWorldSplit: React.FC = () => {
             <>
               <canvas ref={canvasRef} className='main-canvas' />
 
-              {/* Interactive particles */}
-              <ParticleSystem
-                width={canvasBounds.width}
-                height={canvasBounds.height}
-                particleCount={24}
-                colorblindType={selectedType.id as any}
-                visible={showParticles}
-                offsetX={canvasBounds.left}
-                offsetY={canvasBounds.top}
-              />
-
               {/* Draggable slider */}
               <div
                 ref={sliderRef}
@@ -654,18 +641,6 @@ const ColorWorldSplit: React.FC = () => {
                     </motion.button>
                   ))}
                 </div>
-              </div>
-
-              <div className='particle-controls'>
-                <h3>Particles</h3>
-                <motion.button
-                  onClick={() => setShowParticles(!showParticles)}
-                  className={`particle-toggle ${showParticles ? 'active' : ''}`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {showParticles ? 'Hide' : 'Show'} Particles
-                </motion.button>
               </div>
 
               {uploadedImage && (
